@@ -1,0 +1,61 @@
+<!--
+  Copyright 2010 Prometheus Consulting
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<project name="schemabuilder" default="test_copy" basedir="." xmlns:ivy="urn:ivy-ant">
+
+	<property file="./build.properties"/>
+	<property name="srcpath" value="${basedir}/src"/>
+	<property name="testpath" value="${basedir}/src:${basedir}/test:${basedir}/generated"/>
+	
+    <path id="libs">
+    	<fileset dir="${basedir}/temp/lib"/>
+    </path>
+	
+	<import file="ant-targets.xml"/>
+
+	<target name="distribute_copy" description="build the distribution and copy to the target repo">
+		<echo message="${ant.project.name} distribute_copy: start"/>
+		<ant target="retrieve-dependencies"/>
+		<ant target="jar-meta-inf"/>
+		<ant antfile="build-generated.xml" target="generateObjectsFromXSD" inheritall="true"/>
+		<ant target="compile-test-source"/>
+		<ant target="junit"/>
+		<ant target="docs"/>
+		<javadoc-macro/>
+		<source-macro/>
+		<ivyroundup-macro />
+		<ant target="CopyToRemoteRepo"/>
+		<echo message="${ant.project.name} distribute_copy:: complete"/>
+	</target>
+
+	<target name="test_copy" description="build and run the unit tests and copy result to local repo">
+		<echo message="${ant.project.name} test_copy: start"/>
+		<ant target="retrieve-dependencies"/>
+		<ant target="jar-meta-inf"/>		
+		<ant antfile="build-generated.xml" target="schemaBuilder" inheritall="true"/>
+		<ant antfile="build-generated.xml" target="generateObjectsFromXSD" inheritall="true"/>
+	</target>
+			
+	<target name="local-repo" depends="test_copy" description="build and copy to the local repo">
+		<ant target="docs"/>
+		<javadoc-macro/>
+		<source-macro/>
+		<ivyroundup-macro dist.url="file:${package.dir}"/>
+		<ant target="copyToLocalRepo"/>
+		<property file="${buildproperties}"/>
+		<echo message="${ant.project.name} test_copy:: complete"/>
+	</target>
+</project>

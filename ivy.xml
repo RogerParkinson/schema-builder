@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2010 Roger Parkinson
+
+    Licensed under the Apache License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may obtain
+    a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+    License for the specific language governing permissions and limitations
+	under the License.
+-->
+<ivy-module version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+	<info organisation="nz.co.senanque" module="schemabuilder" revision="1.0" status="integration" publication="20090215131647">
+	    <license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+        <ivyauthor name="Roger Parkinson" url="http://code.google.com/p/madura-objects/"/>
+        <repository pattern="http://ivyroundup.googlecode.com/svn/trunk/repo/modules/[organisation]/[module]/[revision]/ivy.xml" ivys="true" url="http://ivyroundup.googlecode.com/" name="ivyroundup"/>
+        <description homepage="http://code.google.com/p/madura-objects/">
+        <p>This extracts definitions from a database using JDBC and makes an XSD file with HyperJAXB3
+        annotations.</p>
+        </description>
+    </info>	
+	<configurations>
+		<conf name="generate"/>
+		<conf name="compile"/>
+		<conf name="default" extends="compile"/>
+		<conf name="test" extends="compile,generate"/>
+		<conf name="docs" visibility="private"/>
+		<conf name="build" visibility="private"/>
+	</configurations>
+	<publications>
+	</publications>
+	<dependencies>
+		<dependency org="net.bluecow" name="ant-googlecode" rev="0.0.2" conf="build->default"/>
+		<dependency org="nz.co.senanque" name="maduradocs" rev="5.0.3" conf="docs->default"/>
+		<dependency org="net.sourceforge.antcontrib" name="ant-contrib" rev="1.0b3" conf="build->default"/>
+		<dependency org="org.jvnet.jaxb2_commons" name="jaxb2-basics-ant" rev="0.5.2" conf="generate->default"/>
+		<dependency org="org.hibernate" name="hibernate" rev="3.5.6-Final" conf="compile->default">
+			<exclude org="org.slf4j" module="slf4j"/>
+		</dependency>
+		<dependency org="org.jvnet.hyperjaxb3" name="hyperjaxb3-ejb-plugin" rev="0.5.4" conf="generate->default">
+			<exclude module="hyperjaxb3-ejb-roundtrip"/><!-- not needed outside of hyperjaxb3 testing -->
+			<exclude org="org.springframework" module="spring"/>
+			<exclude org="org.apache.commons" module="commons-logging"/>
+			<exclude org="org.apache.commons" module="commons-lang"/>
+			<exclude org="org.apache.commons" module="commons-beanutils"/>
+			<exclude org="com.sun.xml.bind" module="jaxb-impl"/>
+			<exclude org="javax.persistence" module="persistence-api"/>
+		</dependency>
+		<dependency org="javax.persistence" name="persistence-api" rev="2.0" conf="generate,default->default"/>
+		<dependency org="org.apache.commons" name="commons-lang" rev="2.4" conf="generate->default"/>
+		<dependency org="org.hibernate" name="hibernate" rev="3.5.6-Final" conf="default->default">
+			<exclude org="net.sourceforge.ehcache" module="ehcache"/>
+		</dependency>
+		<dependency org="net.sourceforge.ehcache" name="ehcache" rev="2.3.0" conf="default->default">
+			<exclude org="org.slf4j" module="slf4j"/>
+		</dependency>
+		<dependency org="org.jvnet.hyperjaxb3" name="hyperjaxb3-ejb-runtime" rev="0.5.4" conf="default->default">
+			<exclude module="hyperjaxb3-ejb-roundtrip"/><!-- not needed outside of hyperjaxb3 testing -->
+			<exclude org="org.springframework" module="spring"/>
+			<exclude org="org.apache.commons" module="commons-logging"/>
+			<exclude org="org.apache.commons" module="commons-lang"/>
+			<exclude org="org.apache.commons" module="commons-beanutils"/>
+			<exclude org="com.sun.xml.bind" module="jaxb-impl"/>
+			<exclude org="javax.persistence" module="persistence-api"/>
+		</dependency>
+        <dependency org="org.springframework" name="spring" rev="3.0.0" conf="compile->orm,oxm,test,context,context-support,tx,jdbc">
+	        <exclude org="javax.jms" module="jms"/>
+	        <exclude org="org.apache.commons" module="commons-logging"/>
+	    </dependency>
+		<dependency org="org.jdom" name="jdom" rev="1.1" conf="compile->default"/>
+        <dependency org="net.sourceforge.cglib" name="cglib" rev="2.2" conf="compile->default"/>
+
+		<dependency org="org.hsqldb" name="hsqldb" rev="1.8.0.10" conf="test->default"/>
+		<dependency org="com.oracle" name="ojdbc" rev="10.2.0.1" conf="test->default"/>
+        <dependency org="org.slf4j" name="slf4j" rev="1.6.1" conf="compile->jcl-migration"/> 
+        <dependency org="org.slf4j" name="slf4j" rev="1.6.1" conf="compile->core"/> 
+        <dependency org="ch.qos" name="logback" rev="0.9.24" conf="test->default" /> 
+		<dependency org="org.apache.ant" name="ant" rev="1.8.0" conf="compile->default"/>
+        <dependency org="org.junit" name="junit" rev="4.5" conf="test->default"/>
+        <dependency org="org.springframework" name="spring" rev="3.0.0" conf="test->test">
+	        <exclude org="javax.jms" ext="jms"/>
+	        <exclude org="org.apache.commons" module="commons-logging" ext="*"/>
+	    </dependency>
+        <exclude org="commons-logging" ext="*"/> <!-- ensures any logging can be used (log4j, logback etc) -->
+        <exclude org="avalon-framework" ext="jar"/>
+        <exclude org="logkit" ext="jar"/>
+        <exclude org="javax.servlet" ext="jar"/>
+        <exclude org="*" ext="*" type="source"/>
+        <exclude org="*" ext="*" type="javadoc"/>
+	</dependencies>
+</ivy-module>
+
+
