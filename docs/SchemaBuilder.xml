@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="MaduraHTML.xsl"?>
+<doc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xsi:noNamespaceSchemaLocation="MaduraDoc.xsd">
+	<title>
+		<MainTitle>Schema Builder</MainTitle>
+		<SubTitle>User Guide</SubTitle>
+		<Author>Roger Parkinson</Author>
+		<Revision>$Revision: 16 $</Revision>
+		<image>logo.jpg</image>
+		<xi:include href="SchemaBuilder.log"/>
+		<references>
+			<reference t="Spring Framework" url="http://www.springframework.org" />
+			<reference t="slf4j" url="http://www.slf4j.org" />
+			<reference t="JAXB Plugins" url="http://weblogs.java.net/blog/kohsuke/archive/2005/06/writing_a_plugi.html" />
+			<reference t="JAXB and Hibernate" url="https://hyperjaxb.dev.java.net/doc/reference/en/html/" />
+			<reference t="JAXB" url="https://jaxb.dev.java.net/" />
+			<reference t="Hibernate" url="http://www.hibernate.org/" />
+			<reference t="Hyperjaxb3" url="https://hyperjaxb3.dev.java.net/" />
+			<reference t="JSR-303" url="http://blog.jteam.nl/2009/08/04/bean-validation-integrating-jsr-303-with-spring/"/>
+			<reference t="Annox" url="http://confluence.highsource.org/display/ANX/Home"/>
+			<reference t="MaduraObjects" url="http://code.google.com/p/madura-objects"/>
+		</references>
+	</title>
+	<body>
+	<process-references/>
+	<process-log/>
+		<h1 t="Overview">
+		<p>Use this to migrate your database to HyperJAXB3<referenceLink t="Hyperjaxb3"/><referenceLink t="JAXB and Hibernate"/>. 
+		It will create the necessary XSD file to contain your database definitions. 
+		It also has a good example of using XJC to generate your entity classes using HyperJAXB3.</p>
+		<p>I've tested it with Oracle 10 and it probably works with other databases just as well. 
+		Datatype support is limited to the common ones. I'm keen to hear of any gaps there.</p>
+		<p>The example XJC which generates JPA entity classes from the XSD injects a Cache annotation into the entity classes. 
+		This is actually Hibernate dependent. 
+		You don't have to inject the Cache settings as the example does, and this is the only Hibernate<referenceLink t="Hibernate"/> 
+		dependency, the rest is pure JPA. To see where this happens look at sandbox.xjb</p>
+		</h1>
+		<h1 t="Example with Ant">
+		<p>The following will generate an XSD file from a database:</p>
+		<code><![CDATA[
+<target name="schemaBuilder">
+	<taskdef name="schemaBuilder" classname="nz.co.senanque.schemabuilder.SchemaBuilderTask">
+		<classpath>
+			<fileset dir="${basedir}/temp/lib" includes="*.jar" />
+			<fileset dir="${basedir}/temp/results" includes="*.jar" />
+		</classpath>
+	</taskdef>
+	<schemaBuilder 
+		driver="${jdbc.driver}" 
+		jdbcURL="${jdbc.url}" 
+		user="${dbuser}" 
+		password="${dbpassword}"
+		outFileName="${basedir}/temp/generated.xsd"
+		/>
+</target>
+]]></code>
+		<p>Just set or replace the symbols with the ones you want and your XSD file will appear.</p>
+		</h1>
+		<h1 t="XJC Examples">
+		<p>XJC is part of HyperJAXB3, using that you can generate JPA entity classes from your new XSD file. The resulting entity classes
+		will have the same table names and column names as your original database. If you generate a new database using Hibernate and the
+		new entity classes, it will be the same as the original database, though without the data of course. Actually that similarity is
+		not quite true. My own experiments suggest that the resulting new database has better indexes created and runs faster.</p>
+		<p>So how do you generate the entity classes? This is a short summary of the examples. There is more documentation on HyperJAXB3
+		elsewhere<referenceLink t="Hyperjaxb3"/><referenceLink t="JAXB and Hibernate"/>.</p>
+		<p>The following Ant task will generate the entity classes </p>
+		<code><![CDATA[
+<target name="generateObjectsFromXSD">
+	<taskdef name="xjc" classname="org.jvnet.jaxb2_commons.xjc.XJC2Task">
+	  <classpath>
+	  	<fileset dir="${basedir}/temp/lib" includes="*.jar" />
+	  </classpath>
+	</taskdef>
+	<delete dir="${basedir}/generated" failonerror="false"/>
+	<mkdir dir="${basedir}/generated"/>
+	<xjc extension="true" destdir="${basedir}/generated" binding="${xjbfile}">
+		<arg line="-verbose -Xequals -XtoString -XhashCode -Xannotate -Xhyperjaxb3-ejb"/>
+		<schema dir=".">
+		 	<include name="${xsdfile}"/>
+		</schema>
+	</xjc>
+</target>
+]]></code>
+		<p>As before you need to substitute the symbols. The xsdfile is the file you generated using the Schema Builder. The xjbfile
+		allows you to specify various global attributes.</p>
+		<h2 t="Package name">
+		<code><![CDATA[
+<jaxb:schemaBindings>
+	<jaxb:package name="com.sandbox"/>
+</jaxb:schemaBindings>
+]]></code>
+		</h2>
+		<h2 t="Annotate each entity">
+		<p>Add the @Cache annotation to each entity class. This is the only dependence we have on Hibernate and is, of course, optional.</p>
+		<code><![CDATA[
+<jaxb:bindings node="//xsd:complexType" multiple="true" required="false">
+	<annox:annotate>
+		<annox:annotate 
+			annox:class="org.hibernate.annotations.Cache" 
+			include="all" usage="NONSTRICT_READ_WRITE" 
+			region="RuntimeCatalogueCache"/>
+	</annox:annotate>
+</jaxb:bindings>
+]]></code>
+		</h2>
+		<h2 t="Global Bindings">
+		<code><![CDATA[
+<jaxb:globalBindings generateIsSetMethod="false" localScoping="toplevel">
+	<jaxb:javaType 
+		name="java.util.Date" xmlType="xsd:date" 
+		parseMethod="nz.co.senanque.schemabuilder.JAXBDataAdapter.parseDate" 
+		printMethod="nz.co.senanque.schemabuilder.JAXBDataAdapter.printDate" /> 
+	<xjc:serializable uid="100"/>
+</jaxb:globalBindings>
+]]></code>
+		<p>The generateIsSetMethod can be set to true is you want booleans to show up as 'is' methods rather than 'get' methods.</p>
+		<p>xjc:serializable uid="100" ensures the serialVersionUID static is added to each class.</p>
+		<p>jaxb:javaType... puts the conversion into the resulting classes. By default JAXB uses GregorianDate for data and you probably
+		don't wan that (though if you do then just remove this bit). With this in place you get java.util.Date used in your getters and setters
+		for date fields.</p>
+		</h2>
+		</h1>
+		<a1 t="Licence">
+			<p>The code specific to MaduraObjects is licenced under the Apache Licence 2.0 <referenceLink t="Apache Licence 2.0"/>.</p>
+			<p>The dependent products have the following licences:</p>
+			<list>
+			<ll name="jaxb">Dual license consisting of the CDDL v1.0 and GPL v2</ll>
+			<ll name="hyperjaxb3">The BSD Style License</ll>
+			<ll name="hibernate">GNU Lesser General Public License, Version 2.1</ll>
+			<ll name="persistance-api">Common Development and Distribution License (CDDL) v1.0</ll>
+			<ll name="slf4j">SLF4J License, V1.0</ll>
+			<ll name="Spring Framework">Apache Software License, Version 2.0</ll>
+			<ll name="jdom">Apache Software License, Version 2.0</ll>
+			</list> 
+		</a1>
+		<a1 t="Release Notes">
+		<note>You need Java 1.6 to compile this project.</note>
+		<table width="12cm">
+			<tw>12cm</tw>
+		<tr>
+			<th>1.0</th>
+		</tr>
+		<tr>
+			<td>Initial version</td>
+		</tr>
+		</table>
+		</a1>
+		<!-- 
+	<a1 t="TODO">
+	<list>
+	<ln>Add more datatypes.</ln>
+	</list>
+	</a1>
+	 -->
+	</body>
+	
+</doc>
