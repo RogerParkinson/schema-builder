@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="xjc_generated" default="generateObjectsFromXSD" basedir="." xmlns:ivy="urn:ivy-ant">
+	
+	<tstamp />
+	<property file="build.properties"/>
+
+
+	<target name="generateObjectsFromXSD">
+		<taskdef name="xjc" classname="org.jvnet.jaxb2_commons.xjc.XJC2Task">
+		  <classpath>
+		  	<fileset dir="${basedir}/temp/lib" includes="*.jar" />
+		  	<pathelement location="${basedir}/bin"/>
+		  	<pathelement location="${basedir}/test"/>
+		  	<fileset file="${basedir}/temp/results/madura-objects.jar" />
+		  </classpath>
+		</taskdef>
+		<delete dir="${basedir}/generated" failonerror="false"/>
+		<mkdir dir="${basedir}/generated"/>
+		<xjc extension="true" destdir="${basedir}/generated" binding="${xjbfile}">
+			<arg line="-verbose -Xequals -XtoString -XhashCode -Xannotate -Xhyperjaxb3-ejb"/>
+			<schema dir=".">
+			 	<include name="${xsdfile}"/>
+			</schema>
+		</xjc>
+	</target>
+
+	<target name="schemaBuilder">
+		<taskdef name="schemaBuilder" classname="nz.co.senanque.schemabuilder.SchemaBuilderTask">
+		  <classpath>
+		  	<fileset dir="${basedir}/temp/lib" includes="*.jar" />
+		  	<fileset dir="${basedir}/temp/results" includes="*.jar" />
+		  </classpath>
+		</taskdef>
+		<schemaBuilder 
+				driver="${jdbc.driver}" 
+				jdbcURL="${jdbc.url}" 
+				user="${dbuser}" 
+				password="${dbpassword}"
+				outFileName="${basedir}/temp/generated.xsd"
+				/>
+	</target>
+
+</project>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://www.example.org/sandbox" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tns="http://www.example.org/sandbox" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc hj annox orm" 
+    xmlns:hj="http://hyperjaxb3.jvnet.org/ejb/schemas/customizations" 
+    xmlns:annox="http://annox.dev.java.net"
+    xmlns:md="http://annox.dev.java.net/nz.co.senanque.validationengine.annotations" 
+    xmlns:orm="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:hba="http://annox.dev.java.net/org.hibernate.annotations"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+    elementFormDefault="qualified">
+
+<xsd:annotation>
+<xsd:appinfo>
+<!-- 
+  <jaxb:globalBindings generateIsSetMethod="false" localScoping="toplevel">
+  <jaxb:javaType 
+    name="java.util.Date" xmlType="xsd:date" 
+    parseMethod="nz.co.senanque.jcx.JAXBDataAdapter.parseDate" 
+    printMethod="nz.co.senanque.jcx.JAXBDataAdapter.printDate" /> 
+    <xjc:serializable uid="100"/>
+  </jaxb:globalBindings>
+  <jaxb:schemaBindings>
+    <jaxb:package name="com.sandbox"/>
+  </jaxb:schemaBindings>
+ -->
+</xsd:appinfo>
+</xsd:annotation>
+<xsd:complexType name="SaPageFlow">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:entity>
+                <orm:table name="SA_PAGE_FLOW"/>
+            </hj:entity>
+        </xsd:appinfo>
+   </xsd:annotation>
+   <sequence>
+<xsd:element name="conId" >
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:basic>
+                <orm:column name="CON_ID" nullable="true" />
+            </hj:basic>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <simpleType>
+   <restriction base="string">
+        <maxLength value="50"/>
+   </restriction>
+   </simpleType>
+</xsd:element>
+<xsd:element name="pgIdDst" >
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:basic>
+                <orm:column name="PG_ID_DST" nullable="true" />
+            </hj:basic>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <simpleType>
+   <restriction base="string">
+        <maxLength value="50"/>
+   </restriction>
+   </simpleType>
+</xsd:element>
+   </sequence>
+</xsd:complexType>
+<complexType name="Frequency">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:entity>
+                <orm:table name="FREQUENCY"/>
+            </hj:entity>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <sequence>
+<xsd:element name="frequencyId" >
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:id>
+                <hj:generated-value strategy="AUTO"/>
+                <orm:column name="FREQUENCY_ID" nullable="false" unique="true" precision="38"/>
+            </hj:id>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <simpleType>
+   <restriction base="long">
+   </restriction>
+   </simpleType>
+</xsd:element>
+<xsd:element name="frequencyName" >
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:basic>
+                <orm:column name="FREQUENCY_NAME" nullable="true" />
+            </hj:basic>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <simpleType>
+   <restriction base="string">
+   </restriction>
+   </simpleType>
+</xsd:element>
+   </sequence>
+</complexType>
+<complexType name="ProductTypeLevel">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:entity>
+                <orm:table name="PRODUCT_TYPE_LEVEL"/>
+            </hj:entity>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <sequence>
+<xsd:element name="prodTypeLevelId" >
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:id>
+                <hj:generated-value strategy="AUTO"/>
+                <orm:column name="PROD_TYPE_LEVEL_ID" nullable="false" unique="true" precision="38"/>
+            </hj:id>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <simpleType>
+   <restriction base="long">
+   </restriction>
+   </simpleType>
+</xsd:element>
+<xsd:element name="prodTypeLevel" >
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:basic>
+                <orm:column name="PROD_TYPE_LEVEL" nullable="false" />
+            </hj:basic>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <simpleType>
+   <restriction base="string">
+   </restriction>
+   </simpleType>
+</xsd:element>
+<xsd:element name="description" >
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:basic>
+                <orm:column name="DESCRIPTION" nullable="true" />
+            </hj:basic>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <simpleType>
+   <restriction base="string">
+   </restriction>
+   </simpleType>
+</xsd:element>
+<xsd:element name="createdBy" >
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:basic>
+                <orm:column name="CREATED_BY" nullable="false" />
+            </hj:basic>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <simpleType>
+   <restriction base="string">
+   </restriction>
+   </simpleType>
+</xsd:element>
+<xsd:element name="createdDate" >
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:basic>
+                <orm:column name="CREATED_DATE" nullable="false" />
+            </hj:basic>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <simpleType>
+   <restriction base="date">
+   </restriction>
+   </simpleType>
+</xsd:element>
+<xsd:element name="modifiedBy" >
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:basic>
+                <orm:column name="MODIFIED_BY" nullable="false" />
+            </hj:basic>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <simpleType>
+   <restriction base="string">
+   </restriction>
+   </simpleType>
+</xsd:element>
+<xsd:element name="modifiedDate" >
+    <xsd:annotation>
+        <xsd:appinfo>
+            <hj:basic>
+                <orm:column name="MODIFIED_DATE" nullable="false" />
+            </hj:basic>    
+        </xsd:appinfo>
+   </xsd:annotation>
+   <simpleType>
+   <restriction base="date">
+   </restriction>
+   </simpleType>
+</xsd:element>
+   </sequence>
+</complexType>
+</schema>
+
