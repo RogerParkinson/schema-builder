@@ -16,7 +16,6 @@
 			<reference t="JAXB" url="https://jaxb.dev.java.net/" />
 			<reference t="Hibernate" url="http://www.hibernate.org/" />
 			<reference t="Hyperjaxb3" url="https://hyperjaxb3.dev.java.net/" />
-			<reference t="JSR-303" url="http://blog.jteam.nl/2009/08/04/bean-validation-integrating-jsr-303-with-spring/"/>
 			<reference t="Annox" url="http://confluence.highsource.org/display/ANX/Home"/>
 			<reference t="MaduraObjects" url="http://code.google.com/p/madura-objects"/>
 		</references>
@@ -34,6 +33,26 @@
 		This is actually Hibernate dependent. 
 		You don't have to inject the Cache settings as the example does, and this is the only Hibernate<referenceLink t="Hibernate"/> 
 		dependency, the rest is pure JPA. To see where this happens look at sandbox.xjb</p>
+		</h1>
+		<h1 t="Why do I need this?">
+		<p>Say you have an existing database. You access it with JDBC and you maintain it with SQL scripts. Life is hard because you
+		have to coordinate changes to the SQL with chages to the Java. This is why Hibernate and similar tools were invented. There are tools
+		which will look at an existing database and build the right entity classes so you to can use JPA.</p>
+		<p>My experience with those tools has not been very good. But once you have the entity classes you can say those classes
+		are the 'master' definitions of the database objects. You don't maintain SQL anymore, you generate it from those entity classes.
+		You get all kinds of advantages with this which the Hibernate<referenceLink t="Hibernate"/> people can tell you about.</p>
+		<p>But you can go a step further. Say you decide that you would really like all your entity classes to have the @Cache annotation
+		added. Say you want them all to have a specific toString() method. If you are using the entity classes as master you have a lot of
+		editing to do.</p>
+		<p>Using an XSD file along with HyperJAXB3 to <emph>generate</emph> your entity classes means the XSD is now the master. For the @Cache
+		and toString() cases you can just change the generation options and rerun the generation. This is very easy. You have a lot of
+		other options around injecting standard code into your entities that you did not have before. 
+		Some of them (like toString()) may require
+		you to write a JAXB plugin but most, like the @Cache, do not. This is because there are a lot of useful plugins already out there
+		such as Annox<referenceLink t="Annox"/> and Madura Objects<referenceLink t="MaduraObjects"/>.</p>
+		<p>Remember the Schema Builder tool is a migration tool. You don't use it over and over, just once to build the XSD. After that
+		you use HyperJAXB3 etc to generate and regenerate your entities. The diagram summarises it.</p>
+		<img width="10cm" href="SchemaBuilder/process.png">Process Overview</img>
 		</h1>
 		<h1 t="Example with Ant">
 		<p>The following will generate an XSD file from a database:</p>
@@ -116,8 +135,11 @@
 		<p>The generateIsSetMethod can be set to true is you want booleans to show up as 'is' methods rather than 'get' methods.</p>
 		<p>xjc:serializable uid="100" ensures the serialVersionUID static is added to each class.</p>
 		<p>jaxb:javaType... puts the conversion into the resulting classes. By default JAXB uses GregorianDate for data and you probably
-		don't wan that (though if you do then just remove this bit). With this in place you get java.util.Date used in your getters and setters
+		don't want that (though if you do then just remove this bit). With this in place you get java.util.Date used in your getters and setters
 		for date fields.</p>
+		<note>The JAXBDataAdapter makes your runtime code dependent on the schema builder. This is not a bad thing, but it is a very simple class
+		that you might prefer to copy into your own code, change the xjb file to point there and you have no dependency on schema builder.
+		</note>
 		</h2>
 		</h1>
 		<a1 t="Licence">
