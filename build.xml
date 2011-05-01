@@ -14,7 +14,7 @@
   limitations under the License.
 -->
 
-<project name="schemabuilder" default="test_copy" basedir="." xmlns:ivy="urn:ivy-ant">
+<project name="schema-builder" default="test_copy" basedir="." xmlns:ivy="urn:ivy-ant">
 
 	<property file="./build.properties"/>
 	<property name="srcpath" value="${basedir}/src"/>
@@ -32,7 +32,6 @@
 		<ant target="jar-meta-inf"/>
 		<ant antfile="build-generated.xml" target="generateObjectsFromXSD" inheritall="true"/>
 		<ant target="compile-test-source"/>
-		<ant target="junit"/>
 		<ant target="docs"/>
 		<javadoc-macro/>
 		<source-macro/>
