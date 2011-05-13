@@ -137,6 +137,15 @@ public class ColumnDescriptor
         case 1:
             type="byte";
             break;
+        case -7:
+            type="boolean";
+            break;
+        case 4:
+            type="integer";
+            break;
+        case 93:
+            type="dateTime";
+            break;
         default:
             log.warn("Unknown type {} on {}",type,m_name);
         }
@@ -149,6 +158,9 @@ public class ColumnDescriptor
             ret.append("            <hj:id>\n");
             ret.append("                <hj:generated-value strategy=\"AUTO\"/>\n");
             ret.append("                <orm:column name=\""+m_name+"\" nullable=\""+((m_nullable)?"true":"false")+"\" unique=\"true\" "+precision+"/>\n");
+//            <orm:generated-value strategy="SEQUENCE" generator="my-sequence"/>
+//            <orm:sequence-generator name="my-sequence" sequence-name="MY_SEQ"/>
+
             ret.append("            </hj:id>    \n");
         }
         else
@@ -162,7 +174,7 @@ public class ColumnDescriptor
         ret.append("   </xsd:annotation>\n");
         ret.append("   <simpleType>\n");
         ret.append("   <restriction base=\""+type+"\">\n");
-        if (m_type == 1111 && m_columnSize != 0)
+        if ((m_type == 1111 || m_type == 12 ) && m_columnSize != 0)
         {
             ret.append("        <maxLength value=\""+m_columnSize+"\"/>\n");  
         }
