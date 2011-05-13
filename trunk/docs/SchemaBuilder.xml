@@ -160,6 +160,12 @@
 		<table width="12cm">
 			<tw>12cm</tw>
 		<tr>
+			<th>1.1</th>
+		</tr>
+		<tr>
+			<td>Added new datatypes: char, dateTime, boolean</td>
+		</tr>
+		<tr>
 			<th>1.0</th>
 		</tr>
 		<tr>
