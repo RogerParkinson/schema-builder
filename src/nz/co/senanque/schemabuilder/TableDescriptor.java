@@ -70,6 +70,7 @@ public class TableDescriptor
 
     public String render()
     {
+        boolean compositeKey = m_primaryKeys.size()>1;
         StringBuilder ret = new StringBuilder();
         ret.append("<complexType name=\""+NameHandler.translateToJavaType(m_name)+"\">\n");
         ret.append("    <xsd:annotation>\n");
@@ -77,17 +78,31 @@ public class TableDescriptor
         ret.append("            <hj:entity>\n");
         ret.append("                <orm:table name=\""+m_name+"\"/>\n");
         ret.append("            </hj:entity>    \n");
-        ret.append("            <annox:annotate>\n");
-        ret.append("            <Cache include=\"all\" usage=\"NONSTRICT_READ_WRITE\" region=\"RuntimeCatalogueCache\" xmlns=\"http://annox.dev.java.net/org.hibernate.annotations\"/> \n");
-        ret.append("            </annox:annotate>\n");
+//        ret.append("            <annox:annotate>\n");
+//        ret.append("            <Cache include=\"all\" usage=\"NONSTRICT_READ_WRITE\" region=\"RuntimeCatalogueCache\" xmlns=\"http://annox.dev.java.net/org.hibernate.annotations\"/> \n");
+//        ret.append("            </annox:annotate>\n");
         ret.append("        </xsd:appinfo>\n");
         ret.append("   </xsd:annotation>\n");
         ret.append("   <sequence>\n");
         for (ColumnDescriptor columnDescriptor: m_columns)
         {
-            ret.append(columnDescriptor.render());
+            ret.append(columnDescriptor.render(compositeKey));
         }
         ret.append("   </sequence>\n");
+        if (compositeKey)
+        {
+            for (String primaryKeyName: m_primaryKeys)
+            {
+                for (ColumnDescriptor columnDescriptor: m_columns)
+                {
+                    if (columnDescriptor.getName().equals(primaryKeyName))
+                    {
+                        ret.append(columnDescriptor.renderAsAttribute());
+                    }
+                }
+                
+            }
+        }
         ret.append("</complexType>\n");
         return ret.toString();
     }

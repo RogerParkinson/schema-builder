@@ -36,7 +36,7 @@
 	</publications>
 	<dependencies>
 		<dependency org="net.bluecow" name="ant-googlecode" rev="0.0.2" conf="build->default"/>
-		<dependency org="nz.co.senanque" name="maduradocs" rev="5.0.3" conf="docs->default"/>
+		<dependency org="nz.co.senanque" name="maduradocs" rev="5.0.4" conf="docs->default"/>
 		<dependency org="net.sourceforge.antcontrib" name="ant-contrib" rev="1.0b3" conf="build->default"/>
 		<dependency org="org.jvnet.jaxb2_commons" name="jaxb2-basics-ant" rev="0.5.2" conf="generate->default"/>
 		<dependency org="org.hibernate" name="hibernate" rev="3.5.6-Final" conf="compile->default">
@@ -68,7 +68,7 @@
 			<exclude org="com.sun.xml.bind" module="jaxb-impl"/>
 			<exclude org="javax.persistence" module="persistence-api"/>
 		</dependency>
-        <dependency org="org.springframework" name="spring" rev="3.0.0" conf="compile->orm,oxm,test,context,context-support,tx,jdbc">
+        <dependency org="org.springframework" name="spring" rev="3.0.1" conf="compile->orm,oxm,test,context,context-support,tx,jdbc">
 	        <exclude org="javax.jms" module="jms"/>
 	        <exclude org="org.apache.commons" module="commons-logging"/>
 	    </dependency>
@@ -82,6 +82,8 @@
         <dependency org="ch.qos" name="logback" rev="0.9.24" conf="test->default" /> 
 		<dependency org="org.apache.ant" name="ant" rev="1.8.0" conf="compile->default"/>
         <dependency org="org.junit" name="junit" rev="4.5" conf="test->default"/>
+        <dependency org="org.hibernate" name="hibernate-tools" rev="3.4.0" conf="build->default"/>
+        
         <dependency org="org.springframework" name="spring" rev="3.0.0" conf="test->test">
 	        <exclude org="javax.jms" ext="jms"/>
 	        <exclude org="org.apache.commons" module="commons-logging" ext="*"/>

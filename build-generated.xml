@@ -9,9 +9,6 @@
 		<taskdef name="xjc" classname="org.jvnet.jaxb2_commons.xjc.XJC2Task">
 		  <classpath>
 		  	<fileset dir="${basedir}/temp/lib" includes="*.jar" />
-		  	<pathelement location="${basedir}/bin"/>
-		  	<pathelement location="${basedir}/test"/>
-		  	<fileset file="${basedir}/temp/results/madura-objects.jar" />
 		  </classpath>
 		</taskdef>
 		<delete dir="${basedir}/generated" failonerror="false"/>
@@ -39,5 +36,23 @@
 				outFileName="${basedir}/temp/generated.xsd"
 				/>
 	</target>
+	<path id="toolslib">
+		<fileset dir="temp/buildlib"/>
+		<fileset dir="temp/lib"/>
+	</path>
+	<taskdef name="hibernatetool" 
+	         classname="org.hibernate.tool.ant.HibernateToolTask" 
+	         classpathref="toolslib" />
+
+    <target name="genschema" description="Exports a generated schema to DB and file">  
+        <hibernatetool destdir="temp">  
+        	<jpaconfiguration persistenceunit="org.example.sandbox"/>
+        	 <classpath>
+        	  <path location="bin" />
+        	 </classpath>
+        	 <!-- list exporters here -->
+            <hbm2ddl create="true" export="true" outputfilename="database-ddl.sql" delimiter=";" format="true" />  
+        </hibernatetool>  
+    </target>
 
 </project>
