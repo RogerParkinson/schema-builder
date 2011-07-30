@@ -46,7 +46,7 @@ public class SchemaBuilder
         while (rs.next())
         {
            String tableName = rs.getString(3);
-            //log.info("name: {}",tableName);
+           // log.info("name: {}",tableName);
             TableDescriptor tableDescriptor = new TableDescriptor(tableName);
             tableMap.put(tableName, tableDescriptor);
             ResultSet rs1 = metadata.getImportedKeys(null, m_schemaName, tableName);
@@ -116,8 +116,8 @@ public class SchemaBuilder
         ret.append("    xmlns:orm=\"http://java.sun.com/xml/ns/persistence/orm\" \n");
         ret.append("    elementFormDefault=\"qualified\">\n");
         ret.append("\n");
-//        ret.append("<xsd:annotation>\n");
-//        ret.append("<xsd:appinfo>\n");
+        ret.append("<xsd:annotation>\n");
+        ret.append("<xsd:appinfo>\n");
 //        ret.append("  <jaxb:globalBindings generateIsSetMethod=\"false\" localScoping=\"toplevel\">\n");
 //        ret.append("  <jaxb:javaType \n");
 //        ret.append("    name=\"java.util.Date\" xmlType=\"xsd:date\" \n");
@@ -128,8 +128,8 @@ public class SchemaBuilder
 //        ret.append("  <jaxb:schemaBindings>\n");
 //        ret.append("    <jaxb:package name=\"com.sandbox\"/>\n");
 //        ret.append("  </jaxb:schemaBindings>\n");
-//        ret.append("</xsd:appinfo>\n");
-//        ret.append("</xsd:annotation>\n");
+        ret.append("</xsd:appinfo>\n");
+        ret.append("</xsd:annotation>\n");
         
         for (TableDescriptor tableDescriptor: tableMap.values())
         {

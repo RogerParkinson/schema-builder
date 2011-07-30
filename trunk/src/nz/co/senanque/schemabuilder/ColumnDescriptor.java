@@ -78,7 +78,7 @@ public class ColumnDescriptor
         StringBuilder ret = new StringBuilder();
       if (m_identifier)
       {
-          ret.append(renderNormalField());
+          ret.append(renderNormalField(false));
       }
         ret.append("<element name=\""+NameHandler.translateToJavaTypeProperty(fk.getName())+"\" type=\"tns:"+NameHandler.translateToJavaType(fk.getForeignTable())+"\">\n");
         
@@ -101,7 +101,8 @@ public class ColumnDescriptor
         ret.append("    <xsd:annotation>\n");
         ret.append("        <xsd:appinfo>\n");
         //ret.append("            <xsd:documentation>Exported key ForeignColumn: "+fk.getForeignColumn()+" LocalColumn: "+fk.getLocalColumn()+" name: "+fk.getName()+" </xsd:documentation>\n");
-        ret.append("            <hj:one-to-many mapped-by=\""+NameHandler.translateToJavaTypeProperty(fk.getForeignColumnJava())+"\" fetch=\"EAGER\">\n");
+//        ret.append("            <hj:one-to-many mapped-by=\""+NameHandler.translateToJavaTypeProperty(fk.getForeignColumnJava())+"\" fetch=\"LAZY\">\n");
+        ret.append("            <hj:one-to-many fetch=\"LAZY\">\n");
         ret.append("                <orm:join-column name=\""+fk.getForeignColumn()+"\" />\n");
         ret.append("            </hj:one-to-many>    \n");
         ret.append("        </xsd:appinfo>\n");
@@ -110,7 +111,7 @@ public class ColumnDescriptor
         return ret.toString();
     }
 
-    private String renderNormalField()
+    private String renderNormalField(boolean attribute)
     {
         String type = ""+m_type;
         String precision = "";
@@ -149,15 +150,16 @@ public class ColumnDescriptor
         default:
             log.warn("Unknown type {} on {}",type,m_name);
         }
+        String elementType = (attribute?"attribute":"element");
         StringBuilder ret = new StringBuilder();
-        ret.append("<xsd:element name=\""+NameHandler.translateToJavaField(m_name)+"\" >\n");
+        ret.append("<xsd:"+elementType+" name=\""+NameHandler.translateToJavaField(m_name)+"\" >\n");
         ret.append("    <xsd:annotation>\n");
         ret.append("        <xsd:appinfo>\n");
         if (m_identifier)
         {
             ret.append("            <hj:id>\n");
             ret.append("                <hj:generated-value strategy=\"AUTO\"/>\n");
-            ret.append("                <orm:column name=\""+m_name+"\" nullable=\""+((m_nullable)?"true":"false")+"\" unique=\"true\" "+precision+"/>\n");
+            ret.append("                <orm:column name=\""+m_name+"\" nullable=\""+((m_nullable)?"true":"false")+"\" "+precision+"/>\n");
 //            <orm:generated-value strategy="SEQUENCE" generator="my-sequence"/>
 //            <orm:sequence-generator name="my-sequence" sequence-name="MY_SEQ"/>
 
@@ -185,23 +187,31 @@ public class ColumnDescriptor
         }
         ret.append("   </restriction>\n");
         ret.append("   </simpleType>\n");
-        ret.append("</xsd:element>\n");
+        ret.append("</xsd:"+elementType+">\n");
         return ret.toString();
     }
 
-    public String render()
+    public String render(boolean compositeKey)
     {
+        if ((m_identifier && compositeKey))
+        {
+            return "";
+        }
         if (m_importedKey != null)
         {
             return renderImportedKey(m_importedKey);
         }
         StringBuilder ret = new StringBuilder();
-        ret.append(renderNormalField());
+        ret.append(renderNormalField(false));
         for (ForeignKey fk: m_exportedKeys)
         {
             ret.append(renderExportedKey(fk));
         }
         return ret.toString();
+    }
+    public String renderAsAttribute()
+    {
+        return renderNormalField(true);
     }
 
     public boolean isNullable()
@@ -231,5 +241,11 @@ public class ColumnDescriptor
         m_exportedKeys.add(fk);
         
     }
+
+    public boolean isIdentifier()
+    {
+        return m_identifier;
+    }
+
 
 }

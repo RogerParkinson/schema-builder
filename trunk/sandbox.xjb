@@ -7,11 +7,6 @@
 			   >
 			   	
 	<jaxb:bindings schemaLocation="sandbox.xsd" node="/xsd:schema">
-		<jaxb:bindings node="//xsd:complexType" multiple="true" required="false">
-			<annox:annotate>
-				<annox:annotate annox:class="org.hibernate.annotations.Cache" include="all" usage="NONSTRICT_READ_WRITE" region="RuntimeCatalogueCache"/>
-			</annox:annotate>
-		</jaxb:bindings>
 		<jaxb:bindings node="xsd:annotation/xsd:appinfo">
 			<jaxb:globalBindings generateIsSetMethod="false" localScoping="toplevel">
 				<jaxb:javaType 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="MaduraHTML.xsl"?>
-<doc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xsi:noNamespaceSchemaLocation="MaduraDoc.xsd">
+<doc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xsi:noNamespaceSchemaLocation="http://maduradocs.googlecode.com/files/MaduraDoc_5.0.3.xsd">
 	<title>
 		<MainTitle>Schema Builder</MainTitle>
 		<SubTitle>User Guide</SubTitle>
@@ -36,7 +36,7 @@
 		</h1>
 		<h1 t="Why do I need this?">
 		<p>Say you have an existing database. You access it with JDBC and you maintain it with SQL scripts. Life is hard because you
-		have to coordinate changes to the SQL with chages to the Java. This is why Hibernate and similar tools were invented. There are tools
+		have to coordinate changes to the SQL with changes to the Java. This is why Hibernate and similar tools were invented. There are tools
 		which will look at an existing database and build the right entity classes so you to can use JPA.</p>
 		<p>My experience with those tools has not been very good. But once you have the entity classes you can say those classes
 		are the 'master' definitions of the database objects. You don't maintain SQL anymore, you generate it from those entity classes.
@@ -143,7 +143,6 @@
 		</h2>
 		</h1>
 		<a1 t="Licence">
-			<p>The code specific to MaduraObjects is licenced under the Apache Licence 2.0 <referenceLink t="Apache Licence 2.0"/>.</p>
 			<p>The dependent products have the following licences:</p>
 			<list>
 			<ll name="jaxb">Dual license consisting of the CDDL v1.0 and GPL v2</ll>
@@ -159,6 +158,15 @@
 		<note>You need Java 1.6 to compile this project.</note>
 		<table width="12cm">
 			<tw>12cm</tw>
+		<tr>
+			<th>1.2</th>
+		</tr>
+		<tr>
+			<td>Change fetches to LAZY rather than EAGER</td>
+		</tr>
+		<tr>
+			<td>Support for composite keys</td>
+		</tr>
 		<tr>
 			<th>1.1</th>
 		</tr>
