@@ -18,8 +18,8 @@
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
 		<property name="url" value="jdbc:oracle:thin:@localhost:1521:XE" />
-		<property name="username" value="PIM" />
-		<property name="password" value="PIM" />
+		<property name="username" value="PRODUCT3" />
+		<property name="password" value="product3" />
 	</bean>
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">

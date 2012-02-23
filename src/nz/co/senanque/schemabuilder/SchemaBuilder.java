@@ -31,11 +31,14 @@ public class SchemaBuilder
 {
     private final String m_schemaName;
     private final String m_outFileName;
+    private final TypeMapper m_typeMapper;
+
     
-    public SchemaBuilder(String schemaName, String outFileName)
+    public SchemaBuilder(String schemaName, String outFileName, TypeMapper typeMapper)
     {
         m_schemaName = schemaName;
         m_outFileName = outFileName;
+        m_typeMapper = typeMapper;
     }
     
     public void build(Connection connection) throws Exception
@@ -91,7 +94,7 @@ public class SchemaBuilder
             {
                 continue;
             }
-            tableDescriptor.addColumn(new ColumnDescriptor(columnName,type,columnSize,nullable,decimalDigits,tableName));
+            tableDescriptor.addColumn(new ColumnDescriptor(columnName,type,columnSize,nullable,decimalDigits,tableName,m_typeMapper));
         }
         rs.close();
 
