@@ -75,7 +75,7 @@
 		<dependency org="org.jdom" name="jdom" rev="1.1" conf="compile->default"/>
         <dependency org="net.sourceforge.cglib" name="cglib" rev="2.2" conf="compile->default"/>
 
-		<dependency org="org.hsqldb" name="hsqldb" rev="1.8.0.10" conf="test->default"/>
+		<dependency org="org.hsqldb" name="hsqldb" rev="2.2.6" conf="test->default"/>
 		<dependency org="com.oracle" name="ojdbc" rev="10.2.0.1" conf="test->default"/>
         <dependency org="org.slf4j" name="slf4j" rev="1.6.1" conf="compile->jcl-migration"/> 
         <dependency org="org.slf4j" name="slf4j" rev="1.6.1" conf="compile->core"/> 

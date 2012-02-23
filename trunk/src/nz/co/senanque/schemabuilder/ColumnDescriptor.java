@@ -43,12 +43,13 @@ public class ColumnDescriptor
     private final int m_decimalDigits;
     private boolean m_identifier;
     private ForeignKey m_importedKey;
+    private final TypeMapper m_typeMapper;
 
     private List<ForeignKey> m_exportedKeys = new ArrayList<ForeignKey>();
 
     private final String m_tableName;
     
-    public ColumnDescriptor(String name, int type, int columnSize, boolean nullable, int decimalDigits, String tableName)
+    public ColumnDescriptor(String name, int type, int columnSize, boolean nullable, int decimalDigits, String tableName, TypeMapper typeMapper)
     {
         m_name = name;
         m_tableName = tableName;
@@ -56,6 +57,7 @@ public class ColumnDescriptor
         m_columnSize = columnSize;
         m_nullable = nullable;
         m_decimalDigits = decimalDigits;
+        m_typeMapper = typeMapper;
     }
 
     public String getName()
@@ -115,44 +117,19 @@ public class ColumnDescriptor
     {
         String type = ""+m_type;
         String precision = "";
-        switch(m_type)
-        {
-        case 91:
-            type="date";
-            break;
-        case 1111:
-        case 12:
-            type="string";
-            break;
-        case 3:
-            if (m_decimalDigits==0)
-            {
-                type="long";
-                precision = "precision=\"38\"";
-            }
-            else
-            {
-                type="decimal";
-            }
-            break;
-        case 1:
-            type="byte";
-            break;
-        case -7:
-            type="boolean";
-            break;
-        case 4:
-            type="integer";
-            break;
-        case 93:
-            type="dateTime";
-            break;
-        default:
-            log.warn("Unknown type {} on {}",type,m_name);
-        }
+        type = m_typeMapper.getType(m_type, m_name);
+        String JDBCtype = m_typeMapper.getJDBCType(m_type, m_name);
+
+		if ("decimal".equals(type) && m_decimalDigits == 0)
+		{
+			type = "long";
+			precision = "precision=\"38\"";
+			JDBCtype += " decimals=0";
+		}
+        
         String elementType = (attribute?"attribute":"element");
         StringBuilder ret = new StringBuilder();
-        ret.append("<xsd:"+elementType+" name=\""+NameHandler.translateToJavaField(m_name)+"\" >\n");
+        ret.append("<xsd:"+elementType+" name=\""+NameHandler.translateToJavaField(m_name)+"\" ><!-- "+JDBCtype+" -->\n");
         ret.append("    <xsd:annotation>\n");
         ret.append("        <xsd:appinfo>\n");
         if (m_identifier)
@@ -162,15 +139,13 @@ public class ColumnDescriptor
             ret.append("                <orm:column name=\""+m_name+"\" nullable=\""+((m_nullable)?"true":"false")+"\" "+precision+"/>\n");
 //            <orm:generated-value strategy="SEQUENCE" generator="my-sequence"/>
 //            <orm:sequence-generator name="my-sequence" sequence-name="MY_SEQ"/>
-
             ret.append("            </hj:id>    \n");
         }
         else
         {
             ret.append("            <hj:basic>\n");
             ret.append("                <orm:column name=\""+m_name+"\" nullable=\""+((m_nullable)?"true":"false")+"\" "+precision+"/>\n");
-            ret.append("            </hj:basic>    \n");
-            
+            ret.append("            </hj:basic>    \n");            
         }
         ret.append("        </xsd:appinfo>\n");
         ret.append("   </xsd:annotation>\n");
@@ -226,20 +201,17 @@ public class ColumnDescriptor
 
     public void setIdentifier(boolean b)
     {
-        m_identifier = b;
-        
+        m_identifier = b;        
     }
 
     public void setImportedKey(ForeignKey fk)
     {
-       m_importedKey = fk;
-        
+       m_importedKey = fk;        
     }
 
     public void addExportedKey(ForeignKey fk)
     {
-        m_exportedKeys.add(fk);
-        
+        m_exportedKeys.add(fk);        
     }
 
     public boolean isIdentifier()

@@ -23,6 +23,7 @@
 		<property name="password" value="${dbpassword}" />
 		<property name="schemaName" value="${schema.Name}" />
 		<property name="user" value="${dbuser}" />
+		<property name="typeFile" value="${typeFile}" />
 	</bean>
 		
 </beans>

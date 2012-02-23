@@ -18,15 +18,19 @@
 
 package nz.co.senanque.schemabuilder;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.Properties;
 
 import org.apache.tools.ant.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * 
@@ -39,6 +43,7 @@ public class SchemaBuilderTask extends Task
 {
     private static final Logger logger = LoggerFactory.getLogger(SchemaBuilderTask.class);
     String m_schemaName;
+    String m_typeFile;
     String m_outFileName;
     String m_user;
     String m_password;
@@ -48,16 +53,34 @@ public class SchemaBuilderTask extends Task
 
     public void execute() {
         registerDriver();
-        m_schemaName = (m_schemaName==null)?m_user:m_schemaName;
-        SchemaBuilder schemaBuilder = new SchemaBuilder(m_schemaName, m_outFileName);
+        m_schemaName = (!StringUtils.hasText(m_schemaName))?"%":m_schemaName;
+        TypeMapper typeMapper = new TypeMapper();
+        if (StringUtils.hasText(m_typeFile))
+        {
+        	Properties types = new Properties();
+        	try {
+				types.load(new FileReader(m_typeFile));
+			} catch (IOException e) {
+				throw new RuntimeException("Failed to open typeFile",e);
+			}
+        	typeMapper.addTypes(types);
+        }
+        SchemaBuilder schemaBuilder = new SchemaBuilder(m_schemaName, m_outFileName,typeMapper);
+        Connection connection = null;
         try
         {
-            schemaBuilder.build(getJDBCConnection(m_user,m_password));
+        	connection = getJDBCConnection(m_user,m_password);
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+        	throw new RuntimeException("Failed to connect to database",e);
         }
+        try {
+			schemaBuilder.build(connection);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
     }
     private void registerDriver()
     {
@@ -139,5 +162,11 @@ public class SchemaBuilderTask extends Task
     {
         m_debug = debug;
     }
+	public String getTypeFile() {
+		return m_typeFile;
+	}
+	public void setTypeFile(String typeFile) {
+		m_typeFile = typeFile;
+	}
 
 }
