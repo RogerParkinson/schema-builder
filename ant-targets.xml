@@ -39,7 +39,7 @@
 	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
 	<basename property="project.name" file="${basedir}"/>
 	<property name="junit.show.output" value="false"/>
-	<property name="javac.compile.debug" value="yes"/>
+	<property name="javac.compile.debug" value="no"/>
 	<property name="javac.compile.deprecation" value="no"/>
 	<property name="junit.tests" value="**/*Test.java"/>
 	<tstamp>
@@ -171,6 +171,9 @@
 		</zip>
 		<checksum algorithm="sha1" file="@{target.dir}/@{project.name}-@{build.version}.zip" property="sha1"/>
 		<copy file="packager-template.xml" tofile="@{target.dir}/packager.xml" overwrite="true">
+			  <filterchain>
+			    <filterreader classname="org.apache.tools.ant.filters.TabsToSpaces"/>
+			  </filterchain>
 			<filterset>
 				<filter token="sha1" value="${sha1}"/>
 				<filter token="dist.url" value="@{dist.url}"/>
@@ -183,6 +186,9 @@
 		    <format pattern="yyyyMMddhhmmss" property="timestamp"/>
 		  </tstamp>
 		<copy file="ivy-template.xml" tofile="@{target.dir}/ivy.xml" overwrite="true">
+			  <filterchain>
+			    <filterreader classname="org.apache.tools.ant.filters.TabsToSpaces"/>
+			  </filterchain>
 			<filterset>
 				<filter token="sha1" value="${sha1}"/>
 				<filter token="dist.url" value="@{dist.url}"/>
@@ -329,7 +335,7 @@
 				<exclude name="**/package.html"/>
 			</fileset>
 			<fileset file="${basedir}/${ant.project.name}.properties"/>
-			<fileset file="${basedir}/LICENSE-2.0.html"/>
+			<fileset file="${basedir}/*.html"/>
 		</jar>
 	</target>
 	
@@ -342,7 +348,7 @@
 				<exclude name="**/package.html"/>
 			</fileset>
 			<fileset file="${basedir}/${ant.project.name}.properties"/>
-			<fileset file="${basedir}/LICENSE-2.0.html"/>
+			<fileset file="${basedir}/*.html"/>
 		</jar>
 	</target>
 	
@@ -360,15 +366,15 @@
 	</target>
 
 	<target name="retrieve-dependencies" depends="clean,init-ivy">
-		<ivy:retrieve conf="default" pattern="${basedir}/temp/lib/[artifact]-[revision].[ext]" />
-		<ivy:retrieve conf="test" pattern="${basedir}/temp/lib/[artifact]-[revision].[ext]" />
-		<ivy:retrieve conf="docs" pattern="${basedir}/temp/doclib/[artifact].[ext]" />
-		<ivy:retrieve conf="build" pattern="${basedir}/temp/buildlib/[artifact].[ext]" />
+		<ivy:retrieve conf="default" pattern="${basedir}/temp/lib/[artifact]-[revision].[ext]"/>
+		<ivy:retrieve conf="test" pattern="${basedir}/temp/lib/[artifact]-[revision].[ext]"/>
+		<ivy:retrieve conf="docs" pattern="${basedir}/temp/doclib/[artifact].[ext]"/>
+		<ivy:retrieve conf="build" pattern="${basedir}/temp/buildlib/[artifact].[ext]"/>
 	</target>
 
 	<target name="retrieve-dependencies-package" depends="retrieve-dependencies">
-		<ivy:retrieve conf="compile" pattern="${basedir}/temp/compile/[artifact]-[revision].[ext]" />
-		<ivy:retrieve conf="package" pattern="${basedir}/temp/package/[artifact]-[revision].[ext]" />
+		<ivy:retrieve conf="compile" pattern="${basedir}/temp/compile/[artifact]-[revision].[ext]"/>
+		<ivy:retrieve conf="package" pattern="${basedir}/temp/package/[artifact]-[revision].[ext]"/>
 	</target>
 
 	<target name="clean">
