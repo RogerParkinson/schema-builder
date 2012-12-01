@@ -42,6 +42,8 @@
 	<property name="javac.compile.debug" value="no"/>
 	<property name="javac.compile.deprecation" value="no"/>
 	<property name="junit.tests" value="**/*Test.java"/>
+	<property name="package.target" value="${basedir}/temp/package"/>
+	<property name="classes.target" value="${basedir}/bin"/>
 	<tstamp>
 		<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
 		<format property="year" pattern="yyyy" />
@@ -80,12 +82,13 @@
 	</target>
 
 	<macrodef name="manifest-macro">
-		<attribute name="manifest.file" default="${results.dir}/MANIFEST.MF"/>
+		<attribute name="manifest.dir" default="${results.dir}"/>
 		<attribute name="buildproperties" default="${buildproperties}"/>
 		<attribute name="build.version" default="${build.version}"/>
 	<sequential>
-		<mkdir dir="${results.dir}"/>
-		<manifest file="@{manifest.file}">
+		<echo>Writing manifest into @{manifest.dir}/MANIFEST.MF</echo>
+		<mkdir dir="@{manifest.dir}"/>
+		<manifest file="@{manifest.dir}/MANIFEST.MF">
 			<attribute name="Built-By" value="${user.name}"/>
 			<attribute name="Implementation-Version" 
 				value="${build.version}"/>   
@@ -101,7 +104,7 @@
 	<macrodef name="updatebuild-macro">
 		<attribute name="buildproperties" default="${buildproperties}"/>
 		<attribute name="build.version" default="${build.version}"/>
-		<attribute name="dir" default="${basedir}/bin"/>
+		<attribute name="dir" default="${classes.target}"/>
 	<sequential>
 		<exec executable="svn" outputproperty="revision.number">
 		    <arg line="info"/>
@@ -239,7 +242,7 @@
 		        filename="${basedir}/temp/package/${ant.project.name}-${build.version}.zip" 
 		        targetfilename="${ant.project.name}-${build.version}.zip"
 		        summary="Packaged for ivyroundup and general use "/>
-		<property file="${basedir}/bin/${ant.project.name}.properties"/>
+		<property file="${classes.target}/${ant.project.name}.properties"/>
 		<echo message="Revison Number  ${revision.number}"/>		
 		<echo message="Build Date    ${build.date}"/>		
 		<echo message="Build Version ${build.version}"/>
@@ -267,8 +270,8 @@
 			  	<fileset dir="${basedir}/temp/buildlib" includes="*.jar" />
 			  </classpath>
 		</taskdef>
-		<mkdir dir="${basedir}/bin"/>
-		<javac destdir="${basedir}/bin" debug="${javac.compile.debug}" deprecation="${javac.compile.deprecation}" target="${javac.compile.target}" srcdir="${srcpath}">
+		<mkdir dir="${classes.target}"/>
+		<javac destdir="${classes.target}" debug="${javac.compile.debug}" deprecation="${javac.compile.deprecation}" target="${javac.compile.target}" srcdir="${srcpath}">
 			<classpath>
 				<path refid="libs"/>
 			</classpath>
@@ -278,8 +281,8 @@
 	</target>
 	
 	<target name="copysource">
-		<copy verbose="true" todir="${basedir}/bin" flatten="no" >
-			<fileset dir="${d}" includes="**/*.properties,**/*.xml,**/*.xsd,**/*.html"/>
+		<copy verbose="true" todir="${classes.target}" flatten="no" >
+			<fileset dir="${d}" includes="**/*.properties,**/*.xml,**/*.xsd,**/*.html,**/*.png"/>
 			<fileset dir="${d}" includes="META-INF/**/*.*"/>
 		</copy>
 	</target>
@@ -291,8 +294,8 @@
 			  </classpath>
 		</taskdef>
 		<updatebuild-macro/>
-		<mkdir dir="${basedir}/bin"/>
-		<javac destdir="${basedir}/bin" debug="on" deprecation="on" target="${javac.compile.target}" srcdir="${testpath}">
+		<mkdir dir="${classes.target}"/>
+		<javac destdir="${classes.target}" debug="on" deprecation="on" target="${javac.compile.target}" srcdir="${testpath}">
 			<classpath>
 				<path refid="libs"/>
 			</classpath>
@@ -309,7 +312,7 @@
 			<fileset dir="${basedir}/">
 		      	<include name="${ant.project.name}.jar"/>
 		    </fileset>
-			<pathelement location="${basedir}/bin"/>
+			<pathelement location="${classes.target}"/>
 			<fileset dir="${basedir}/temp/lib">
 		      	<include name="*.jar"/>
 		    </fileset>
@@ -330,7 +333,7 @@
 				<include name="spring.*"/>
 				<include name="services/*.*"/>
 			</metainf>
-			<fileset dir="${basedir}/bin">
+			<fileset dir="${classes.target}">
 				<exclude name="**/tests/**"/>
 				<exclude name="**/package.html"/>
 			</fileset>
@@ -343,7 +346,7 @@
 		<mkdir dir="${results.dir}/"/>
 		<manifest-macro/>
 		<jar jarfile="${results.dir}/${ant.project.name}.jar" index="true" manifest="${results.dir}/MANIFEST.MF">
-			<fileset dir="${basedir}/bin">
+			<fileset dir="${classes.target}">
 				<exclude name="**/tests/**"/>
 				<exclude name="**/package.html"/>
 			</fileset>
@@ -369,18 +372,19 @@
 		<ivy:retrieve conf="default" pattern="${basedir}/temp/lib/[artifact]-[revision].[ext]"/>
 		<ivy:retrieve conf="test" pattern="${basedir}/temp/lib/[artifact]-[revision].[ext]"/>
 		<ivy:retrieve conf="docs" pattern="${basedir}/temp/doclib/[artifact].[ext]"/>
-		<ivy:retrieve conf="build" pattern="${basedir}/temp/buildlib/[artifact].[ext]"/>
+		<ivy:retrieve conf="build" pattern="${basedir}/temp/buildlib/[artifact].[ext]" />
+		<ivy:retrieve conf="compile" pattern="${basedir}/temp/compile/[artifact]-[revision].[ext]" type="jar"/>
 	</target>
 
 	<target name="retrieve-dependencies-package" depends="retrieve-dependencies">
-		<ivy:retrieve conf="compile" pattern="${basedir}/temp/compile/[artifact]-[revision].[ext]"/>
-		<ivy:retrieve conf="package" pattern="${basedir}/temp/package/[artifact]-[revision].[ext]"/>
+		<mkdir dir="${package.target}"/>
+		<ivy:retrieve conf="package" pattern="${package.target}/[artifact]-[revision].[ext]" type="jar"/>
 	</target>
 
 	<target name="clean">
 		<delete file="${ant.project.name}.jar" failonerror="false"/>
-		<delete dir="${basedir}/bin" failonerror="false"/>
-		<mkdir dir="${basedir}/bin"/>
+		<delete dir="${classes.target}" failonerror="false"/>
+		<mkdir dir="${classes.target}"/>
 		<delete failonerror="false" dir="${basedir}/temp"/>
 		<mkdir dir="${basedir}/temp/lib"/>
 		<mkdir dir="${basedir}/temp/doclib"/>
@@ -392,7 +396,6 @@
 			    <include name="**/*.java;**/*.properties;**/*.xml"/>
 			</fileset>
 		</delete>
-
 	</target>
 
 	<target name="copyToLocalRepo">
@@ -402,10 +405,32 @@
 			<fileset file="${basedir}/temp/package/ivy.xml"/>
 			<fileset file="${basedir}/temp/package/packager.xml"/>
 		</copy>
-		<property file="${basedir}/bin/${ant.project.name}.properties"/>
+		<property file="${classes.target}/${ant.project.name}.properties"/>
 		<echo message="Revison Number  ${revision.number}"/>		
 		<echo message="Build Date    ${build.date}"/>		
 		<echo message="Build Version ${build.version}"/>
+	</target>
+	
+	<target name="make-war">
+		<mkdir dir="${basedir}/temp"/>
+		<delete file="${basedir}/temp/${project.name}.war" failonerror="false"/>
+		<war destfile="${basedir}/temp/${project.name}.war" webxml="${basedir}/WebContent/WEB-INF/web.xml">
+			<lib dir="${package.dir}"/>
+			<classes dir="${classes.target}" excludes="META-INF/*"/>
+			<fileset dir="${basedir}/WebContent/" includes="VAADIN/**"/>
+			<fileset dir="${basedir}/" includes="LICENSE*.html"/>
+			<metainf dir="generated/META-INF"/>
+			<manifest >
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Implementation-Version" 
+					value="${build.version}"/>   
+				<attribute name="Implementation-Title" 
+					value="${project.name}"/>   
+				<attribute name="Implementation-Vendor" 
+					value="${build.company}"/>   
+	  			<attribute name="Built-Date" value="${TODAY}"/>                 
+			</manifest>
+		</war>
 	</target>
 
 </project>
