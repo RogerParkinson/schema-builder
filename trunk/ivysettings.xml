@@ -34,7 +34,7 @@
 
 	<resolvers>
 	    <chain name="libraries">
-		    <packager name="roundup" buildRoot="${user.home}/.ivy2/packager/build" resourceCache="${user.home}/.ivy2/packager/cache">
+		    <packager name="roundup" buildRoot="${user.home}/.ivy2/packager/build" resourceCache="${user.home}/.ivy2/packager/cache" preserveBuildDirectories="false">
 		        <ivy pattern="${roundup-repository}/repo/modules/[organisation]/[module]/[revision]/ivy.xml"/>
 		        <artifact pattern="${roundup-repository}/repo/modules/[organisation]/[module]/[revision]/packager.xml"/>
 		    </packager>

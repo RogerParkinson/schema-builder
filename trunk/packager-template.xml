@@ -32,16 +32,18 @@
         <!-- javadoc -->
         <mkdir dir="javadoc"/>
         <unzip src="archive/${download.name}-javadocs-${revision}.zip" dest="javadoc"/>
-        <zip destfile="artifacts/javadocs/javadoc.zip">
+        <zip destfile="artifacts/javadocs/${download.name}-javadoc.zip">
             <fileset dir="javadoc"/>
         </zip>
         <!-- source -->
         <mkdir dir="source"/>
         <unzip src="archive/${download.name}-source-${revision}.zip" dest="source"/>
-        <zip destfile="artifacts/sources/source.zip">
+        <zip destfile="artifacts/sources/${download.name}-source.zip">
             <fileset dir="source/src"/>
+            <!--
             <fileset dir="source/docs"/>
             <fileset dir="source/test"/>
+            -->
         </zip>
         <mkdir dir="artifacts/docs"/>
         <move file="archive/@project.name@.pdf" tofile="artifacts/docs/@project.name@.pdf"/>

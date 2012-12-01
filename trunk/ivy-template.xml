@@ -29,8 +29,8 @@
     <publications>
         <artifact conf="generate"/>
         <artifact conf="default"/>
-        <artifact name="javadoc" type="javadoc" ext="zip" conf="default"/>
-        <artifact name="source" type="source" ext="zip" conf="default"/>
+        <artifact name="@ant.project.name@-javadoc" type="javadoc" ext="zip" conf="default"/>
+        <artifact name="@ant.project.name@-source" type="source" ext="zip" conf="default"/>
         <artifact name="@project.name@" type="doc" ext="pdf" conf="default"/>
     </publications>
     <dependencies>
@@ -61,14 +61,14 @@
             <exclude org="com.sun.xml.bind" module="jaxb-impl"/>
 			<exclude org="javax.persistence" module="persistence-api"/>
         </dependency>
-        <dependency org="org.springframework" name="spring" rev="3.0.0" conf="default->orm,oxm,test,context-support,tx,jdbc">
+        <dependency org="org.springframework" name="spring" rev="3.0.1" conf="default->orm,oxm,test,context-support,tx,jdbc">
             <exclude org="javax.jms" module="jms"/>
             <exclude org="org.apache.commons" module="commons-logging"/>
         </dependency>
         <dependency org="org.jdom" name="jdom" rev="1.1" conf="default->default"/>
         <dependency org="net.sourceforge.cglib" name="cglib" rev="2.2" conf="default->default"/>
-        <dependency org="org.slf4j" name="slf4j" rev="1.6.1" conf="default->jcl-migration"/> 
-        <dependency org="org.slf4j" name="slf4j" rev="1.6.1" conf="default->core"/> 
+        <dependency org="org.slf4j" name="slf4j" rev="1.6.6" conf="default->jcl-migration"/> 
+        <dependency org="org.slf4j" name="slf4j" rev="1.6.6" conf="default->core"/> 
         <exclude org="avalon-framework" ext="jar"/>
         <exclude org="logkit" ext="jar"/>
         <exclude org="javax.servlet" ext="jar"/>
