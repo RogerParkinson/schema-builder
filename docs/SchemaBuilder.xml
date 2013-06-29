@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="MaduraHTML.xsl"?>
-<doc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xsi:noNamespaceSchemaLocation="http://maduradocs.googlecode.com/files/MaduraDoc_5.0.3.xsd">
+<doc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xsi:noNamespaceSchemaLocation="http://maduradocs.googlecode.com/files/MaduraDoc_5.0.6.xsd">
 	<title>
 		<MainTitle>Schema Builder</MainTitle>
 		<SubTitle>User Guide</SubTitle>
@@ -28,7 +28,7 @@
 		<p>Use this to migrate your database to HyperJAXB3<referenceLink t="Hyperjaxb3"/><referenceLink t="JAXB and Hibernate"/>. 
 		It will create the necessary XSD file to contain your database definitions. 
 		It also has a good example of using XJC to generate your entity classes using HyperJAXB3.</p>
-		<p>I've tested it with Oracle 10 and it probably works with other databases just as well. 
+		<p>I've tested it with Oracle 10 and it probably works with other databases just as well. It <emph>doesn't</emph> work with HSQLDB. 
 		Datatype support is limited to the common ones. I'm keen to hear of any gaps there.</p>
 		<p>The example XJC which generates JPA entity classes from the XSD injects a Cache annotation into the entity classes. 
 		This is actually Hibernate dependent. 
@@ -174,12 +174,19 @@
 		<table width="12cm">
 			<tw>12cm</tw>
 		<tr>
-			<th>1.3</th>
+			<th>1.4</th>
 		</tr>
 		<tr>
-			<td>Allow for customising of JDBC type mapping, as well as extending the base
-			system to handle all known ones.</td>
+			<td>Build for Java 1.7</td>
+            <td>Update docs with HSQLDB restriction</td>
 		</tr>
+        <tr>
+            <th>1.3</th>
+        </tr>
+        <tr>
+            <td>Allow for customising of JDBC type mapping, as well as extending the base
+            system to handle all known ones.</td>
+        </tr>
 		<tr>
 			<th>1.2</th>
 		</tr>
