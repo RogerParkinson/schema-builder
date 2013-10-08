@@ -173,11 +173,19 @@
 		<note>You need Java 1.6 to compile this project.</note>
 		<table width="12cm">
 			<tw>12cm</tw>
+        <tr>
+            <th>1.5</th>
+        </tr>
+        <tr>
+            <td>Added maven pom file.</td>
+        </tr>
 		<tr>
 			<th>1.4</th>
 		</tr>
 		<tr>
 			<td>Build for Java 1.7</td>
+        </tr>
+        <tr>
             <td>Update docs with HSQLDB restriction</td>
 		</tr>
         <tr>
