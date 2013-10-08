@@ -20,16 +20,12 @@
 	<property name="srcpath" value="${basedir}/src"/>
 	<property name="testpath" value="${basedir}/src:${basedir}/test:${basedir}/generated"/>
 	
-    <path id="libs">
-    	<fileset dir="${basedir}/temp/lib"/>
-    </path>
-	
 	<import file="ant-targets.xml"/>
 
 	<target name="distribute_copy" description="build the distribution and copy to the target repo">
 		<echo message="${ant.project.name} distribute_copy: start"/>
 		<ant target="retrieve-dependencies"/>
-		<ant target="jar-meta-inf"/>
+		<ant target="jar"/>
 		<ant antfile="build-generated.xml" target="generateObjectsFromXSD" inheritall="true"/>
 		<ant target="compile-test-source"/>
 		<ant target="docs"/>
@@ -43,7 +39,7 @@
 	<target name="test_copy" description="build and run the unit tests and copy result to local repo">
 		<echo message="${ant.project.name} test_copy: start"/>
 		<ant target="retrieve-dependencies"/>
-		<ant target="jar-meta-inf"/>		
+		<ant target="jar"/>		
 		<ant antfile="build-generated.xml" target="schemaBuilder" inheritall="true"/>
 		<ant antfile="build-generated.xml" target="generateObjectsFromXSD" inheritall="true"/>
 	</target>
