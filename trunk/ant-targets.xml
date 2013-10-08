@@ -29,10 +29,11 @@
 	This will populate your ivy cache correctly and compiles from Eclipse will work then.
 	
 -->
-<project xmlns:ivy="urn:ivy-ant">
+<project xmlns:ivy="urn:ivy-ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
 	<property name="package.dir" value="${basedir}/temp/package" />
 	<property name="ivy.install.version" value="2.1.0" />
+	<property name="maven.install.version" value="2.1.3" />
 	<property name="ivy.resolve" value="${basedir}/ivy.xml" />
 	<property name="ivy.jar.dir" value="${basedir}/ivy" />
 	<property name="ivy.settings" value="file://${basedir}/ivysettings.xml"/>
@@ -44,10 +45,20 @@
 	<property name="junit.tests" value="**/*Test.java"/>
 	<property name="package.target" value="${basedir}/temp/package"/>
 	<property name="classes.target" value="${basedir}/bin"/>
+	<property name="results.dir" value="${basedir}/temp/results"/>
+	<property name="pom.dir" value="${results.dir}/maven/nz.co.senanque/${ant.project.name}"/>
+
 	<tstamp>
 		<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
 		<format property="year" pattern="yyyy" />
 	</tstamp>
+
+    <path id="libs">
+    	<fileset dir="${basedir}/temp/lib"/>
+    </path>
+    <path id="test">
+    	<fileset dir="${basedir}/temp/test"/>
+    </path>
 
 	<property name="suppress.retrieve-dependencies" value="false"/>
 	<condition property="suppress.retrieve-dependencies-true" value="true">
@@ -61,10 +72,35 @@
 		</or>
 	</condition>
 
+	<condition property="maven.already.downloaded">
+		<or>
+	      <available file="${ivy.jar.dir}/maven-${maven.install.version}.jar"/>
+		</or>
+	</condition>
+
 	<property name="buildproperties" value="${ant.project.name}.properties"/>
 	<property name="results.dir" value="${basedir}/temp/results"/>
 	<property name="javadoc.dir" value="${basedir}/temp/javadoc"/>
-
+	<property name="dist.url" value="http://${ant.project.name}.googlecode.com/files"/>
+	<path id="maven-ant-tasks.classpath">
+		<path location="${ivy.jar.dir}/maven-${maven.install.version}.jar"/>
+		<path location="${ivy.jar.dir}/wagon-ftp-2.4.jar"/>
+		<path location="${ivy.jar.dir}/commons-net-3.3.jar"/>
+	</path>
+	
+	<target name="download-maven" unless="maven.already.downloaded">
+		<mkdir dir="${ivy.jar.dir}"/>
+		<get src="http://repo1.maven.org/maven2/org/apache/maven/maven-ant-tasks/${maven.install.version}/maven-ant-tasks-${maven.install.version}.jar" dest="${ivy.jar.dir}/maven-${maven.install.version}.jar" usetimestamp="true" verbose="true"/>
+		<echo>maven download complete.</echo>
+	</target>
+	
+	<target name="init-maven" depends="download-maven">
+		<mkdir dir="${ivy.jar.dir}"/>
+		  <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+		           uri="antlib:org.apache.maven.artifact.ant"
+		           classpathref="maven-ant-tasks.classpath" />
+	</target>
+	
 	<target name="download-ivy" unless="ivy.already.downloaded">
 		<mkdir dir="${ivy.jar.dir}"/>
 		<get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.dir}/ivy-${ivy.install.version}.jar" usetimestamp="true" />
@@ -72,6 +108,7 @@
 	</target>
 	
 	<target name="init-ivy" depends="download-ivy">
+		<mkdir dir="${ivy.jar.dir}"/>
 		<typedef resource="org/apache/ivy/ant/antlib.xml" uri="urn:ivy-ant">
 			<classpath>
 				<fileset dir="${ivy.jar.dir}" includes="*.jar"/>
@@ -85,6 +122,7 @@
 		<attribute name="manifest.dir" default="${results.dir}"/>
 		<attribute name="buildproperties" default="${buildproperties}"/>
 		<attribute name="build.version" default="${build.version}"/>
+		<attribute name="license.title" default="Apache License 2.0"/>
 	<sequential>
 		<echo>Writing manifest into @{manifest.dir}/MANIFEST.MF</echo>
 		<mkdir dir="@{manifest.dir}"/>
@@ -96,6 +134,8 @@
 				value="${project.name}"/>   
 			<attribute name="Implementation-Vendor" 
 				value="${build.company}"/>   
+			<attribute name="License-title" 
+				value="@{license.title}"/>   
   			<attribute name="Built-Date" value="${TODAY}"/>                 
 		</manifest>
 	</sequential>
@@ -153,6 +193,7 @@
 	</macrodef>
 	
 	<macrodef name="ivyroundup-macro">
+		<attribute name="results.dir" default="${results.dir}"/>
 		<attribute name="target.dir" default="${package.dir}"/>
 		<attribute name="project.name" default="${ant.project.name}"/>
 		<attribute name="build.version" default="${build.version}"/>
@@ -161,6 +202,7 @@
 		<echo>ivyroundup-macro</echo>
 		<delete dir="@{target.dir}" failonerror="false"/>
 		<mkdir dir="@{target.dir}"/>
+		<mkdir dir="@{results.dir}/"/>
 		<copy tofile="@{target.dir}/@{project.name}-javadocs-@{build.version}.zip" file="${results.dir}/@{project.name}-javadocs.zip"/>
 		<copy tofile="@{target.dir}/@{project.name}-source-@{build.version}.zip" file="${results.dir}/@{project.name}-source.zip"/>
 		<copy tofile="@{target.dir}/@{project.name}-@{build.version}.jar" file="${results.dir}/@{project.name}.jar"/>
@@ -198,6 +240,7 @@
 				<filter token="timestamp" value="${timestamp}"/>
 				<filter token="ant.project.name" value="${ant.project.name}"/>
 				<filter token="project.name" value="${project.name}"/>
+				<filter token="build.version" value="@{build.version}"/>
 			</filterset>
 		</copy>
 		<echo>ivyroundup-macro completed</echo>
@@ -270,6 +313,7 @@
 			  	<fileset dir="${basedir}/temp/buildlib" includes="*.jar" />
 			  </classpath>
 		</taskdef>
+		<delete dir="${classes.target}" failonerror="false"/>
 		<mkdir dir="${classes.target}"/>
 		<javac destdir="${classes.target}" debug="${javac.compile.debug}" deprecation="${javac.compile.deprecation}" target="${javac.compile.target}" srcdir="${srcpath}">
 			<classpath>
@@ -298,6 +342,7 @@
 		<javac destdir="${classes.target}" debug="on" deprecation="on" target="${javac.compile.target}" srcdir="${testpath}">
 			<classpath>
 				<path refid="libs"/>
+				<path refid="test"/>
 			</classpath>
 		</javac>
 		<foreach delimiter=":" list="${testpath}" param="d" target="copysource"/>
@@ -306,7 +351,7 @@
 	<target name="junit">
 		<mkdir dir="${basedir}/temp/junit"/>
 		<echo>${junit.tests}</echo>
-		<junit printsummary="yes" showoutput="${junit.show.output}" fork="yes" haltonfailure="yes" >
+		<junit printsummary="yes" showoutput="${junit.show.output}" fork="yes" haltonfailure="yes" dir="${basedir}">
 		  <formatter type="xml" />
 		  <classpath>
 			<fileset dir="${basedir}/">
@@ -316,7 +361,11 @@
 			<fileset dir="${basedir}/temp/lib">
 		      	<include name="*.jar"/>
 		    </fileset>
+			<fileset dir="${basedir}/temp/test">
+		      	<include name="*.jar"/>
+		    </fileset>
 		  </classpath>
+			<sysproperty key="project_loc" value="${basedir}"/>
             <batchtest haltonfailure="yes" todir="${basedir}/temp/junit" >
                     <fileset dir="${basedir}/test">
                           <include name="${junit.tests}"/>
@@ -325,27 +374,36 @@
 		</junit>
 	</target>
 
-	<target name="jar-meta-inf" depends="compile-distribute-source">
-		<mkdir dir="${results.dir}/"/>
-		<manifest-macro/>
-		<jar jarfile="${results.dir}/${ant.project.name}.jar" index="true" manifest="${results.dir}/MANIFEST.MF">
-			<metainf dir="${basedir}/src/META-INF">
-				<include name="spring.*"/>
-				<include name="services/*.*"/>
-			</metainf>
-			<fileset dir="${classes.target}">
-				<exclude name="**/tests/**"/>
-				<exclude name="**/package.html"/>
-			</fileset>
-			<fileset file="${basedir}/${ant.project.name}.properties"/>
-			<fileset file="${basedir}/*.html"/>
-		</jar>
+	<target name="pom" depends="init-ivy">
+		  <tstamp>
+		    <format pattern="yyyyMMddhhmmss" property="timestamp"/>
+		  </tstamp>
+		<copy file="${basedir}/ivy-template.xml" tofile="${results.dir}/ivy.xml" overwrite="true">
+			  <filterchain>
+			    <filterreader classname="org.apache.tools.ant.filters.TabsToSpaces"/>
+			  </filterchain>
+			<filterset>
+				<filter token="dist.url" value="${dist.url}"/>
+				<filter token="timestamp" value="${timestamp}"/>
+				<filter token="ant.project.name" value="${ant.project.name}"/>
+				<filter token="project.name" value="${project.name}"/>
+				<filter token="build.version" value="${build.version}"/>
+			</filterset>
+		</copy>
+		<mkdir dir="${pom.dir}"/>
+		<property name="ivy.pom.name" value="${project.name}"/>
+		<ivy:makepom ivyfile="${results.dir}/ivy.xml" templatefile="${basedir}/pom-template.xml" 
+				conf="default" pomfile="${pom.dir}/pom.xml">
+			<mapping conf="default" scope="runtime"/>
+		</ivy:makepom>
 	</target>
 	
 	<target name="jar" depends="compile-distribute-source">
 		<mkdir dir="${results.dir}/"/>
 		<manifest-macro/>
+		<ant target="pom"/>		
 		<jar jarfile="${results.dir}/${ant.project.name}.jar" index="true" manifest="${results.dir}/MANIFEST.MF">
+			<metainf dir="${results.dir}" includes="maven/**/*"/>
 			<fileset dir="${classes.target}">
 				<exclude name="**/tests/**"/>
 				<exclude name="**/package.html"/>
@@ -370,7 +428,7 @@
 
 	<target name="retrieve-dependencies" depends="clean,init-ivy">
 		<ivy:retrieve conf="default" pattern="${basedir}/temp/lib/[artifact]-[revision].[ext]"/>
-		<ivy:retrieve conf="test" pattern="${basedir}/temp/lib/[artifact]-[revision].[ext]"/>
+		<ivy:retrieve conf="test" pattern="${basedir}/temp/test/[artifact]-[revision].[ext]"/>
 		<ivy:retrieve conf="docs" pattern="${basedir}/temp/doclib/[artifact].[ext]"/>
 		<ivy:retrieve conf="build" pattern="${basedir}/temp/buildlib/[artifact].[ext]" />
 		<ivy:retrieve conf="compile" pattern="${basedir}/temp/compile/[artifact]-[revision].[ext]" type="jar"/>
@@ -405,6 +463,7 @@
 			<fileset file="${basedir}/temp/package/ivy.xml"/>
 			<fileset file="${basedir}/temp/package/packager.xml"/>
 		</copy>
+		<ant target="publish-maven-local"/>
 		<property file="${classes.target}/${ant.project.name}.properties"/>
 		<echo message="Revison Number  ${revision.number}"/>		
 		<echo message="Build Date    ${build.date}"/>		
@@ -418,6 +477,7 @@
 			<lib dir="${package.dir}"/>
 			<classes dir="${classes.target}" excludes="META-INF/*"/>
 			<fileset dir="${basedir}/WebContent/" includes="VAADIN/**"/>
+			<fileset dir="${basedir}/WebContent/" includes="WEB-INF/**" excludes="WEB-INF/web.xml"/>
 			<fileset dir="${basedir}/" includes="LICENSE*.html"/>
 			<metainf dir="generated/META-INF"/>
 			<manifest >
@@ -432,5 +492,39 @@
 			</manifest>
 		</war>
 	</target>
+	<target name="CopyWarToRemoteRepo">
+		<echo>Copying repo files to ${repo.dir}/${ant.project.name}/${build.version}</echo>
+		<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" name="gcupload">
+			  <classpath>
+			  	<fileset dir="${basedir}/temp/buildlib" includes="*.jar" />
+			  </classpath>
+		</taskdef>
+		<gcupload 
+		        username="${svn.username}" 
+		        password="${svn.password}" 
+		        projectname="${ant.project.name}" 
+		        filename="${basedir}/temp/pdf/${project.name}.pdf" 
+		        targetfilename="${project.name}-${build.version}.pdf"
+		        summary="Documentation"/>
+		<gcupload 
+		        username="${svn.username}" 
+		        password="${svn.password}" 
+		        projectname="${ant.project.name}" 
+		        filename="${basedir}/temp/${project.name}.war" 
+		        targetfilename="${ant.project.name}-${build.version}.war"
+		        summary="WAR file for J2EE deployment"/>
+		<property file="${basedir}/bin/${ant.project.name}.properties"/>
+		<echo message="Revison Number  ${revision.number}"/>		
+		<echo message="Build Date    ${build.date}"/>		
+		<echo message="Build Version ${build.version}"/>
+	</target>
+	
+	<target name="publish-maven-local" depends="init-maven">
+		 <artifact:pom id="mypom" file="${pom.dir}/pom.xml" />
+		<!-- installs on ~/.m2/repository -->
+		  <artifact:install file="${package.target}/${ant.project.name}-${build.version}.jar">
+		    <pom refid="mypom"/>
+		  </artifact:install>
 
+	</target>
 </project>
