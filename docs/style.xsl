@@ -4,8 +4,8 @@
 	<xsl:param name="WatermarkLandscape">none</xsl:param>
 	<xsl:param name="Year">2007</xsl:param>
 	<xsl:param name="ProductVersion">Madura 3</xsl:param>
-	<xsl:param name="Build">Build 1234</xsl:param>
 	<xsl:param name="Company">Prometheus Consulting</xsl:param>
+	<xsl:param name="BaseDir">./</xsl:param>
 
 	<xsl:attribute-set name="normal">
 		<xsl:attribute name="font-size">10pt</xsl:attribute>
@@ -280,7 +280,7 @@
 	<xsl:template name="PageFooter">
 		<fo:block xsl:use-attribute-sets="foot" space-before="0.1cm">
 			<fo:block><xsl:text>&#xA9;</xsl:text><xsl:value-of select="$Year"/><xsl:text> </xsl:text><xsl:value-of select="$Company"/></fo:block>
-			<fo:block><xsl:value-of select="/doc/title/SubTitle"/><xsl:text> </xsl:text><xsl:value-of select="$ProductVersion"/><xsl:text> </xsl:text><xsl:value-of select="$Build"/></fo:block>
+			<fo:block><xsl:value-of select="/doc/title/SubTitle"/><xsl:text> </xsl:text><xsl:value-of select="$ProductVersion"/><xsl:text> </xsl:text></fo:block>
 			<fo:block><xsl:text>- </xsl:text><fo:page-number/><xsl:text> -</xsl:text></fo:block>
 		</fo:block>
  	</xsl:template>
@@ -306,7 +306,31 @@
 				text-align="center" >
          	<xsl:attribute name="src">
          		<xsl:text>url(</xsl:text>
+         		<xsl:value-of select="$BaseDir"/>
+         		<xsl:text>images/</xsl:text>
          		<xsl:value-of select="image"/>
+         		<xsl:text>)</xsl:text>
+         	</xsl:attribute>
+         	</fo:external-graphic>
+         	</fo:block>
+        	</xsl:if>
+    	<xsl:if test="string-length(Logo) &gt; 0">
+	    	<fo:block text-align="center" space-before="4cm">
+         	<fo:external-graphic 
+         		xsl:use-attribute-sets="graphic"
+         		height="100%" 
+         		content-width="6cm" 
+         		border-style="solid" 
+				border-color="black" 
+				border-width="0.25mm"
+				scaling="uniform" 
+				scaling-method="resample-any-method"
+				text-align="center" >
+         	<xsl:attribute name="src">
+         		<xsl:text>url(</xsl:text>
+         		<xsl:value-of select="$BaseDir"/>
+         		<xsl:text>images/</xsl:text>
+         		<xsl:value-of select="Logo"/>
          		<xsl:text>)</xsl:text>
          	</xsl:attribute>
          	</fo:external-graphic>
