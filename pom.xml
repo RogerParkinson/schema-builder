@@ -4,7 +4,7 @@
 	<groupId>nz.co.senanque</groupId>
 	<artifactId>schema-builder</artifactId>
 	<packaging>jar</packaging>
-	<version>1.5.1-SNAPSHOT</version>
+	<version>1.5.1</version>
 	<name>SchemaBuilder</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -159,14 +159,14 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-context</artifactId>
-		    <version>3.2.6.RELEASE</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>3.2.6.RELEASE</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-tx</artifactId>
-		    <version>3.2.6.RELEASE</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>3.2.6.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -179,9 +179,9 @@
 			<version>1.1</version>
 		</dependency>
 		<dependency>
-		    <groupId>cglib</groupId>
-		    <artifactId>cglib</artifactId>
-		    <version>2.2</version>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -198,256 +198,221 @@
 		<defaultGoal>install</defaultGoal>
 		<plugins>
 			<plugin>
-				<inherited>true</inherited>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-
-			<plugin>
 				<groupId>nz.co.senanque</groupId>
 				<artifactId>maduradocs</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
+				<version>6.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>pdf</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<id>attach-artifacts</id>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifacts>
+						<artifact>
+							<file>${pdf}</file>
+							<type>pdf</type>
+						</artifact>
+					</artifacts>
+				</configuration>
+			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4.3</version>
+				<executions>
+					<execution>
+						<id>default-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-testResources</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>testResources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
-			</plugin>
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>nz.co.senanque</groupId>
-					<artifactId>maduradocs</artifactId>
-					<version>6.1.0</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>pdf</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>1.5</version>
-					<executions>
-						<execution>
-							<phase>package</phase>
-							<id>attach-artifacts</id>
-							<goals>
-								<goal>attach-artifact</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-						<artifacts>
-							<artifact>
-								<file>${pdf}</file>
-								<type>pdf</type>
-							</artifact>
-						</artifacts>
-					</configuration>
-				</plugin>
-				<plugin>
-					<inherited>true</inherited>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.0.2</version>
-					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
-					</configuration>
-				</plugin>
-				<plugin>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.4.3</version>
-					<executions>
-						<execution>
-							<id>default-resources</id>
-							<phase>process-resources</phase>
-							<goals>
-								<goal>resources</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>default-testResources</id>
-							<phase>process-test-resources</phase>
-							<goals>
-								<goal>testResources</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>2.2.1</version>
-					<executions>
-						<execution>
-							<id>attach-sources</id>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.9.1</version>
-					<executions>
-						<execution>
-							<id>attach-javadocs</id>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.jvnet.jaxb2.maven2</groupId>
-					<artifactId>maven-jaxb2-plugin</artifactId>
-					<version>0.8.0</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>generate</goal>
-							</goals>
-							<configuration>
-								<extension>true</extension>
- 								<bindingDirectory>src/test/resources/</bindingDirectory>
-								<bindingIncludes>
-									<include>AddressBook.xjb</include>
-								</bindingIncludes>
- 								<schemaDirectory>src/test/resources/</schemaDirectory>
-								<schemaIncludes>
-									<include>AddressBook.xsd</include>
-								</schemaIncludes>
- 								<generateDirectory>${basedir}/generated-sources/xjc</generateDirectory>
-								<addCompileSourceRoot>true</addCompileSourceRoot>
-								<cleanPackageDirectories>false</cleanPackageDirectories>
-								<forceRegenerate>true</forceRegenerate>
-								<removeOldOutput>false</removeOldOutput>
-								<extension>true</extension>
-								<args>
-									<arg>-extension</arg>
-									<arg>-Xequals</arg>
-									<arg>-XtoString</arg>
-									<arg>-Xannotate</arg>
-									<arg>-XhashCode</arg>
-									<arg>-Xhyperjaxb3-ejb</arg>
-								</args>
-							</configuration>
-						</execution>
-					</executions>
-					<dependencies>
-						<dependency>
-							<groupId>org.hibernate</groupId>
-							<artifactId>hibernate-annotations</artifactId>
-							<version>3.5.4-Final</version>
-						</dependency>
-						<dependency>
-							<groupId>org.jvnet.hyperjaxb3</groupId>
-							<artifactId>hyperjaxb3-ejb-runtime</artifactId>
-							<version>0.5.6</version>
-							<exclusions>
-								<exclusion>
-									<groupId>commons-logging</groupId>
-									<artifactId>commons-logging</artifactId>
-								</exclusion>
-								<exclusion>
-									<groupId>org.jvnet.hyperjaxb3</groupId>
-									<artifactId>hyperjaxb3-ejb-roundtrip</artifactId>
-								</exclusion>
-								<!-- Needs to be excluded because it pulls the wrong version -->
-								<exclusion>
-									<groupId>org.springframework</groupId>
-									<artifactId>spring</artifactId>
-								</exclusion>
-								<!-- Needs to be excluded because it pulls the wrong version -->
-								<exclusion>
-									<groupId>org.slf4j</groupId>
-									<artifactId>slf4j-log4j12</artifactId>
-								</exclusion>
-							</exclusions>
-						</dependency>
-						<dependency>
-							<groupId>org.jvnet.hyperjaxb3</groupId>
-							<artifactId>hyperjaxb3-ejb-plugin</artifactId>
-							<version>0.5.6</version>
-							<exclusions>
-								<exclusion>
-									<groupId>commons-logging</groupId>
-									<artifactId>commons-logging</artifactId>
-								</exclusion>
-								<exclusion>
-									<groupId>org.jvnet.hyperjaxb3</groupId>
-									<artifactId>hyperjaxb3-ejb-roundtrip</artifactId>
-								</exclusion>
-								<!-- Needs to be excluded because it pulls the wrong version -->
-								<exclusion>
-									<groupId>org.springframework</groupId>
-									<artifactId>spring</artifactId>
-								</exclusion>
-								<!-- Needs to be excluded because it pulls the wrong version -->
-								<exclusion>
-									<groupId>org.slf4j</groupId>
-									<artifactId>slf4j-log4j12</artifactId>
-								</exclusion>
-							</exclusions>
-						</dependency>
-						<!-- These two are needed to manage logging -->
-						<dependency>
-							<groupId>com.pyx4j</groupId>
-							<artifactId>maven-plugin-log4j</artifactId>
-							<version>1.0.1</version>
-						</dependency>
-						<dependency>
-							<groupId>org.slf4j</groupId>
-							<artifactId>slf4j-log4j12</artifactId>
-							<version>1.7.5</version>
-						</dependency>
-						<dependency>
-							<groupId>org.springframework</groupId>
-							<artifactId>spring-context-support</artifactId>
-							<version>3.2.6.RELEASE</version>
-						</dependency>
+				<version>0.8.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<extension>true</extension>
+							<bindingDirectory>src/test/resources/</bindingDirectory>
+							<bindingIncludes>
+								<include>AddressBook.xjb</include>
+							</bindingIncludes>
+							<schemaDirectory>src/test/resources/</schemaDirectory>
+							<schemaIncludes>
+								<include>AddressBook.xsd</include>
+							</schemaIncludes>
+							<generateDirectory>${basedir}/generated-sources/xjc</generateDirectory>
+							<addCompileSourceRoot>true</addCompileSourceRoot>
+							<cleanPackageDirectories>false</cleanPackageDirectories>
+							<forceRegenerate>true</forceRegenerate>
+							<removeOldOutput>false</removeOldOutput>
+							<extension>true</extension>
+							<args>
+								<arg>-extension</arg>
+								<arg>-Xequals</arg>
+								<arg>-XtoString</arg>
+								<arg>-Xannotate</arg>
+								<arg>-XhashCode</arg>
+								<arg>-Xhyperjaxb3-ejb</arg>
+							</args>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-annotations</artifactId>
+						<version>3.5.4-Final</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jvnet.hyperjaxb3</groupId>
+						<artifactId>hyperjaxb3-ejb-runtime</artifactId>
+						<version>0.5.6</version>
+						<exclusions>
+							<exclusion>
+								<groupId>commons-logging</groupId>
+								<artifactId>commons-logging</artifactId>
+							</exclusion>
+							<exclusion>
+								<groupId>org.jvnet.hyperjaxb3</groupId>
+								<artifactId>hyperjaxb3-ejb-roundtrip</artifactId>
+							</exclusion>
+							<!-- Needs to be excluded because it pulls the wrong version -->
+							<exclusion>
+								<groupId>org.springframework</groupId>
+								<artifactId>spring</artifactId>
+							</exclusion>
+							<!-- Needs to be excluded because it pulls the wrong version -->
+							<exclusion>
+								<groupId>org.slf4j</groupId>
+								<artifactId>slf4j-log4j12</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
+					<dependency>
+						<groupId>org.jvnet.hyperjaxb3</groupId>
+						<artifactId>hyperjaxb3-ejb-plugin</artifactId>
+						<version>0.5.6</version>
+						<exclusions>
+							<exclusion>
+								<groupId>commons-logging</groupId>
+								<artifactId>commons-logging</artifactId>
+							</exclusion>
+							<exclusion>
+								<groupId>org.jvnet.hyperjaxb3</groupId>
+								<artifactId>hyperjaxb3-ejb-roundtrip</artifactId>
+							</exclusion>
+							<!-- Needs to be excluded because it pulls the wrong version -->
+							<exclusion>
+								<groupId>org.springframework</groupId>
+								<artifactId>spring</artifactId>
+							</exclusion>
+							<!-- Needs to be excluded because it pulls the wrong version -->
+							<exclusion>
+								<groupId>org.slf4j</groupId>
+								<artifactId>slf4j-log4j12</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
+					<!-- These two are needed to manage logging -->
+					<dependency>
+						<groupId>com.pyx4j</groupId>
+						<artifactId>maven-plugin-log4j</artifactId>
+						<version>1.0.1</version>
+					</dependency>
+					<dependency>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
+						<version>1.7.5</version>
+					</dependency>
+					<dependency>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-context-support</artifactId>
+						<version>3.2.6.RELEASE</version>
+					</dependency>
 
-					</dependencies>
-				</plugin>
-				<plugin>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.12.4</version>
-					<executions>
-						<execution>
-							<id>default-test</id>
-							<phase>test</phase>
-							<goals>
-								<goal>test</goal>
-							</goals>
-							<configuration>
-								<skipTests>true</skipTests>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<executions>
+					<execution>
+						<id>default-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.kuali.maven.plugins</groupId>
@@ -468,22 +433,25 @@
 					</execution>
 				</executions>
 			</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-gpg-plugin</artifactId>
-					<version>1.4</version>
-					<executions>
-						<execution>
-							<id>sign-artifacts</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>sign</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on 
+					the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -504,6 +472,19 @@
 										</versionRange>
 										<goals>
 											<goal>generate</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.kuali.maven.plugins</groupId>
+										<artifactId>properties-maven-plugin</artifactId>
+										<versionRange>[1.1.9,)</versionRange>
+										<goals>
+											<goal>read-project-properties</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
